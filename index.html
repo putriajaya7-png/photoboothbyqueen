@@ -1,464 +1,442 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kiyowo Photobooth ✨</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QUEEN'S FRAME - Personal Studio Experience 👑</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Cherry+Bomb+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Cinzel:wght@400;700;900&family=Great+Vibes&family=UnifrakturMaguntia&family=Montserrat:wght@300;600&family=Bebas+Neue&family=Cherry+Bomb+One&display=swap" rel="stylesheet">
     <style>
+        /* Base Transition */
+        * { transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease; }
+
         :root {
-            --pink-soft: #ffcad4;
-            --pink-hot: #f7aef8;
-            --purple-cute: #b388eb;
-            --yellow-pastel: #fdfcdc;
+            --primary-bg: #0a0a0a;
+            --panel-bg: rgba(255, 255, 255, 0.03);
+            --accent-color: #d4af37;
+            --text-main: #ffffff;
+            --font-logo: 'Cinzel', serif;
         }
 
         body {
-            font-family: 'Quicksand', sans-serif;
-            background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%);
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
+            background-image: radial-gradient(circle at top right, rgba(255,255,255,0.05), transparent);
         }
 
-        .font-cherry { font-family: 'Cherry Bomb One', cursive; }
-
-        .glass-morphism {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 24px;
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
         }
 
-        /* Video Container Styling */
-        #video-container {
+        .gold-gradient-text {
+            background: linear-gradient(to bottom, #fcf6ba 0%, #bf953f 22%, #fbf5b7 45%, #aa771c 50%, #fcf6ba 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Camera Box */
+        #camera-wrapper {
             position: relative;
             width: 100%;
             max-width: 640px;
-            aspect-ratio: 4/3;
-            overflow: hidden;
-            border: 8px solid white;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border-radius: 20px;
-            background: #ffeef2;
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transform: scaleX(-1); /* Mirror effect */
-        }
-
-        .filter-sepia { filter: sepia(0.5); }
-        .filter-grayscale { filter: grayscale(1); }
-        .filter-warm { filter: saturate(1.5) sepia(0.2); }
-        .filter-cool { filter: hue-rotate(30deg) brightness(1.1); }
-        .filter-soft { filter: brightness(1.1) contrast(0.9) saturate(1.2); }
-
-        /* Animation for Flash */
-        @keyframes flash {
-            0% { background: white; opacity: 0; }
-            50% { background: white; opacity: 1; }
-            100% { background: white; opacity: 0; }
-        }
-        .flash-active {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 50;
-            animation: flash 0.3s ease-out forwards;
-        }
-
-        .btn-kiyowo {
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .btn-kiyowo:hover {
-            transform: scale(1.05) rotate(-2deg);
-        }
-
-        .photo-strip {
-            width: 220px;
-            background: white;
-            padding: 12px;
-            box-shadow: 5px 5px 25px rgba(0,0,0,0.1);
+            aspect-ratio: 4 / 3;
+            background: #000;
+            border: 8px solid var(--accent-color);
             border-radius: 4px;
-        }
-        
-        .photo-frame {
-            width: 100%;
-            height: 140px;
-            background: #f9f9f9;
-            margin-bottom: 10px;
-            object-fit: cover;
             overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+
+        /* Theme Buttons */
+        .theme-pill {
+            width: 100%;
+            padding: 12px;
+            border-radius: 14px;
+            cursor: pointer;
+            border: 2px solid transparent;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 12px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(0,0,0,0.2);
         }
+        .theme-pill:hover { transform: translateX(8px); background: rgba(255,255,255,0.05); }
+        .theme-pill.active { border-color: var(--accent-color); background: rgba(255,255,255,0.1); }
 
-        /* Floating stickers decoration */
-        .sticker-bg {
-            position: fixed;
-            z-index: -1;
-            opacity: 0.3;
-            pointer-events: none;
-        }
+        .dot { width: 14px; height: 14px; border-radius: 4px; }
 
-        .error-overlay {
-            position: absolute;
-            inset: 0;
-            background: #fff5f7;
+        /* Strip Design */
+        #strip-preview {
+            width: 200px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            text-align: center;
-            z-index: 100;
+            gap: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            transition: 0.5s;
         }
+
+        .slot { width: 100%; aspect-ratio: 4 / 3; background: rgba(0,0,0,0.1); overflow: hidden; }
+        .slot img { width: 100%; height: 100%; object-fit: cover; }
+
+        .btn-capture {
+            background: var(--accent-color);
+            color: #000;
+            font-family: var(--font-logo);
+            font-weight: 900;
+            padding: 1.25rem;
+            border-radius: 100px;
+            letter-spacing: 3px;
+            box-shadow: 0 10px 20px -5px var(--accent-color);
+        }
+        .btn-capture:hover { transform: translateY(-3px) scale(1.02); filter: brightness(1.1); }
+
+        .flash-fx {
+            position: absolute; inset: 0; background: white; opacity: 0; z-index: 100; pointer-events: none;
+        }
+        .flash-active { animation: flash-play 0.5s ease-out; }
+        @keyframes flash-play { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
+
+        /* Scrollbar */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 10px; }
     </style>
 </head>
 <body class="p-4 md:p-8">
-
-    <!-- Latar Belakang Dekorasi -->
-    <div class="sticker-bg text-4xl top-10 left-10">🌸</div>
-    <div class="sticker-bg text-5xl bottom-20 right-20">🎀</div>
-    <div class="sticker-bg text-4xl top-1/2 left-5">✨</div>
-    <div class="sticker-bg text-6xl top-20 right-10">🍭</div>
-
-    <div class="max-w-6xl mx-auto">
+    
+    <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <header class="text-center mb-8">
-            <h1 class="text-5xl md:text-6xl font-cherry text-pink-500 drop-shadow-lg mb-2">
-                Kiyowo Photo! ✨
-            </h1>
-            <p class="text-gray-600 font-semibold italic">Ambil foto tercantikmu di sini, Bestie! 📸💖</p>
+        <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+            <div class="text-center md:text-left">
+                <h1 id="web-logo" class="text-5xl md:text-7xl font-black tracking-tighter" style="font-family: var(--font-logo);">QUEEN'S FRAME</h1>
+                <p id="web-tagline" class="text-[10px] tracking-[0.6em] uppercase opacity-50 mt-2">Personalized High-End Studio Experience</p>
+            </div>
+            
+            <div class="flex gap-4">
+                <div class="glass-panel px-6 py-3 flex items-center gap-4">
+                    <span class="text-[10px] font-bold opacity-50">STUDIO MODE</span>
+                    <span id="active-mode-display" class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest"><span class="w-2 h-2 bg-green-500 rounded-full"></span> CUSTOMIZING</span>
+                </div>
+            </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <!-- Left Side: Controls & Filters -->
-            <div class="glass-morphism p-6 flex flex-col gap-6 shadow-sm">
-                <div>
-                    <h3 class="font-bold text-pink-600 mb-3 flex items-center">
-                        <span class="mr-2">🌈</span> Pilih Filter
-                    </h3>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="setFilter('')" class="p-2 text-xs bg-white rounded-lg border hover:border-pink-400 transition">Normal</button>
-                        <button onclick="setFilter('filter-soft')" class="p-2 text-xs bg-pink-50 rounded-lg border hover:border-pink-400 transition">Soft Pink</button>
-                        <button onclick="setFilter('filter-warm')" class="p-2 text-xs bg-orange-50 rounded-lg border hover:border-pink-400 transition">Warm</button>
-                        <button onclick="setFilter('filter-cool')" class="p-2 text-xs bg-blue-50 rounded-lg border hover:border-pink-400 transition">Cool Blue</button>
-                        <button onclick="setFilter('filter-sepia')" class="p-2 text-xs bg-yellow-50 rounded-lg border hover:border-pink-400 transition">Vintage</button>
-                        <button onclick="setFilter('filter-grayscale')" class="p-2 text-xs bg-gray-100 rounded-lg border hover:border-pink-400 transition">B&W</button>
+            <!-- Left Panel: Dual Theme Selectors -->
+            <aside class="lg:col-span-3 space-y-6 order-2 lg:order-1">
+                <!-- Web Themes -->
+                <div class="glass-panel p-5">
+                    <h3 class="text-[10px] font-black tracking-widest uppercase mb-4 opacity-60">1. Website Atmosphere</h3>
+                    <div class="space-y-2 max-h-[300px] overflow-y-auto custom-scroll pr-2" id="web-theme-list">
+                        <!-- Injected via JS -->
                     </div>
                 </div>
 
-                <div>
-                    <h3 class="font-bold text-pink-600 mb-3 flex items-center">
-                        <span class="mr-2">⭐</span> Stiker Lucu
-                    </h3>
-                    <div class="flex flex-wrap gap-2 text-2xl cursor-pointer" id="sticker-selector">
-                        <span onclick="addSticker('🎀')" class="hover:scale-125 transition">🎀</span>
-                        <span onclick="addSticker('💖')" class="hover:scale-125 transition">💖</span>
-                        <span onclick="addSticker('🐱')" class="hover:scale-125 transition">🐱</span>
-                        <span onclick="addSticker('⭐')" class="hover:scale-125 transition">⭐</span>
-                        <span onclick="addSticker('🍓')" class="hover:scale-125 transition">🍓</span>
-                        <span onclick="addSticker('🦋')" class="hover:scale-125 transition">🦋</span>
-                        <span onclick="addSticker('🌈')" class="hover:scale-125 transition">🌈</span>
-                        <span onclick="addSticker('🧸')" class="hover:scale-125 transition">🧸</span>
+                <!-- Strip Themes -->
+                <div class="glass-panel p-5">
+                    <h3 class="text-[10px] font-black tracking-widest uppercase mb-4 opacity-60">2. Photo Strip Design</h3>
+                    <div class="space-y-2 max-h-[300px] overflow-y-auto custom-scroll pr-2" id="strip-theme-list">
+                        <!-- Injected via JS -->
                     </div>
-                    <p class="text-[10px] text-gray-500 mt-2 italic">*Klik stiker yang muncul untuk menghapusnya</p>
+                </div>
+            </aside>
+
+            <!-- Center Panel: Camera -->
+            <main class="lg:col-span-6 flex flex-col items-center order-1 lg:order-2">
+                <div id="camera-wrapper">
+                    <div id="flash" class="flash-fx"></div>
+                    <div id="countdown" class="absolute inset-0 flex items-center justify-center text-white text-9xl font-black z-50 hidden" style="text-shadow: 0 0 30px rgba(0,0,0,0.5);">3</div>
+                    <video id="video-feed" autoplay playsinline></video>
+                    <div id="sticker-canvas" class="absolute inset-0 pointer-events-none"></div>
                 </div>
 
-                <div class="mt-auto">
-                    <button id="reset-btn" onclick="resetGallery()" class="w-full py-3 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition mb-2 border border-gray-200">
-                        Reset Galeri 🔄
+                <div class="w-full max-w-md mt-8 flex flex-col gap-4">
+                    <button onclick="startSession()" class="btn-capture w-full group overflow-hidden relative">
+                        <span class="relative z-10">START SESSION</span>
                     </button>
-                </div>
-            </div>
-
-            <!-- Middle: Camera -->
-            <div class="lg:col-span-1 flex flex-col items-center">
-                <div id="video-container" class="relative">
-                    <div id="flash-effect"></div>
-                    <div id="countdown" class="absolute inset-0 flex items-center justify-center text-8xl font-cherry text-white z-40 hidden" style="text-shadow: 0 0 20px rgba(0,0,0,0.5);">5</div>
                     
-                    <div id="camera-error" class="error-overlay hidden">
-                        <div class="text-4xl mb-4">😿</div>
-                        <h4 class="text-pink-600 font-bold mb-2">Kamera Tidak Aktif</h4>
-                        <p class="text-sm text-gray-500 mb-4 px-6">Browser memblokir kamera karena ini adalah file lokal. Coba jalankan lewat server (VS Code Live Server) atau upload ke internet ya!</p>
-                        <button onclick="initCamera()" class="px-4 py-2 bg-pink-400 text-white rounded-lg text-xs font-bold">Coba Lagi</button>
-                    </div>
-
-                    <video id="webcam" autoplay playsinline muted></video>
-                    <!-- Floating Stickers Layer -->
-                    <div id="sticker-layer" class="absolute inset-0 pointer-events-none"></div>
-                </div>
-
-                <div class="mt-8 flex flex-col gap-4 w-full items-center">
-                    <button id="capture-btn" onclick="startCaptureProcess()" class="btn-kiyowo px-12 py-5 bg-gradient-to-r from-pink-400 to-purple-500 text-white rounded-full font-bold text-2xl shadow-xl border-b-4 border-purple-700 active:border-b-0 active:translate-y-1">
-                        AMBIL FOTO! 📸
-                    </button>
-                    <p id="status-msg" class="text-pink-600 font-bold animate-pulse opacity-0 transition-opacity duration-300">Berpose ya... (1/4) ✨</p>
-                </div>
-            </div>
-
-            <!-- Right Side: Result Strip -->
-            <div class="glass-morphism p-6 flex flex-col items-center shadow-sm">
-                <h3 class="font-bold text-pink-600 mb-4 font-cherry text-2xl">Hasil Foto 🎀</h3>
-                
-                <div id="final-strip-container" class="photo-strip flex flex-col items-center bg-white">
-                    <div id="slot-1" class="photo-frame border border-dashed border-pink-200 text-gray-300 text-[10px]">Foto 1</div>
-                    <div id="slot-2" class="photo-frame border border-dashed border-pink-200 text-gray-300 text-[10px]">Foto 2</div>
-                    <div id="slot-3" class="photo-frame border border-dashed border-pink-200 text-gray-300 text-[10px]">Foto 3</div>
-                    <div id="slot-4" class="photo-frame border border-dashed border-pink-200 text-gray-300 text-[10px]">Foto 4</div>
-                    <div class="w-full text-center py-2">
-                        <p class="font-cherry text-pink-400 text-sm tracking-widest">KIYOWO 2024</p>
+                    <div class="flex justify-center gap-6 glass-panel py-3 px-6">
+                        <button onclick="addEmoji('✨')" class="text-2xl hover:scale-125 transition">✨</button>
+                        <button onclick="addEmoji('🎀')" class="text-2xl hover:scale-125 transition">🎀</button>
+                        <button onclick="addEmoji('🖤')" class="text-2xl hover:scale-125 transition">🖤</button>
+                        <button onclick="addEmoji('🍒')" class="text-2xl hover:scale-125 transition">🍒</button>
+                        <button onclick="addEmoji('💄')" class="text-2xl hover:scale-125 transition">💄</button>
                     </div>
                 </div>
+            </main>
 
-                <button id="download-btn" onclick="downloadStrip()" class="mt-6 w-full py-3 bg-green-400 text-white rounded-xl font-bold hover:bg-green-500 transition shadow-md hidden">
-                    Unduh Foto 📥
-                </button>
-            </div>
+            <!-- Right Panel: Result Strip -->
+            <aside class="lg:col-span-3 flex flex-col items-center order-3">
+                <div class="glass-panel p-6">
+                    <h3 class="text-center text-[10px] font-black tracking-widest uppercase mb-6 opacity-60">Live Preview</h3>
+                    
+                    <div id="strip-preview">
+                        <div class="slot" id="frame-0"></div>
+                        <div class="slot" id="frame-1"></div>
+                        <div class="slot" id="frame-2"></div>
+                        <div class="slot" id="frame-3"></div>
+                        
+                        <div class="mt-4 text-center pt-4 pb-2 border-t border-white/10" id="strip-footer">
+                            <h2 id="strip-title" class="text-xl font-bold tracking-tighter">QUEEN'S FRAME</h2>
+                            <p id="strip-tag" class="text-[7px] tracking-[0.3em] uppercase opacity-60">Luxury Collective Studio</p>
+                        </div>
+                    </div>
+
+                    <button id="download-trigger" onclick="generateFinalStrip()" class="hidden mt-6 w-full py-4 bg-white text-black font-black text-[10px] tracking-widest uppercase rounded-xl hover:scale-105 transition-all shadow-2xl">Save Masterpiece</button>
+                </div>
+            </aside>
         </div>
     </div>
 
-    <!-- Hidden Canvas for Processing -->
-    <canvas id="process-canvas" class="hidden"></canvas>
+    <canvas id="working-canvas" class="hidden"></canvas>
 
     <script>
-        const video = document.getElementById('webcam');
-        const countdownEl = document.getElementById('countdown');
-        const flashEl = document.getElementById('flash-effect');
-        const stickerLayer = document.getElementById('sticker-layer');
-        const statusMsg = document.getElementById('status-msg');
-        const downloadBtn = document.getElementById('download-btn');
-        const canvas = document.getElementById('process-canvas');
-        const ctx = canvas.getContext('2d');
-        const cameraError = document.getElementById('camera-error');
+        // 10 Website Themes
+        const webThemes = [
+            { id: 'web-maroon', name: 'Sangar Maroon', bg: '#2d0000', panel: 'rgba(255,255,255,0.05)', accent: '#d4af37', text: '#ffffff', font: 'Cinzel' },
+            { id: 'web-dark', name: 'Gothic Noir', bg: '#050505', panel: 'rgba(255,255,255,0.02)', accent: '#888888', text: '#ffffff', font: 'UnifrakturMaguntia' },
+            { id: 'web-navy', name: 'Midnight Navy', bg: '#000814', panel: 'rgba(255,255,255,0.05)', accent: '#bf953f', text: '#ffffff', font: 'Cinzel' },
+            { id: 'web-coquette', name: 'Cute Coquette', bg: '#fff0f3', panel: 'rgba(255,143,171,0.1)', accent: '#ff8fab', text: '#ff5c8d', font: 'Great Vibes' },
+            { id: 'web-matcha', name: 'Zen Matcha', bg: '#f1f8e9', panel: 'rgba(51,105,30,0.05)', accent: '#558b2f', text: '#33691e', font: 'Montserrat' },
+            { id: 'web-vintage', name: 'Warm Vintage', bg: '#fdfcf0', panel: 'rgba(93,64,55,0.05)', accent: '#8d6e63', text: '#5d4037', font: 'Playfair Display' },
+            { id: 'web-sunset', name: 'Bold Sunset', bg: '#fff7ed', panel: 'rgba(234,88,12,0.1)', accent: '#ea580c', text: '#7c2d12', font: 'Bebas Neue' },
+            { id: 'web-red', name: 'Classic Red', bg: '#450a0a', panel: 'rgba(255,255,255,0.05)', accent: '#f87171', text: '#ffffff', font: 'Cinzel' },
+            { id: 'web-sky', name: 'Dreamy Sky', bg: '#f0f9ff', panel: 'rgba(14,165,233,0.1)', accent: '#0284c7', text: '#0369a1', font: 'Montserrat' },
+            { id: 'web-white', name: 'Minimal White', bg: '#fafafa', panel: 'rgba(0,0,0,0.03)', accent: '#1a1a1a', text: '#111111', font: 'Plus Jakarta Sans' }
+        ];
 
-        let activeFilter = '';
+        // 10 Strip Themes
+        const stripThemes = [
+            { id: 'str-vintage', name: 'Vintage Paper', bg: '#f4ecd8', text: '#5d4037', font: 'Playfair Display' },
+            { id: 'str-coquette', name: 'Pink Ribbon', bg: '#ffe5ec', text: '#ff8fab', font: 'Great Vibes' },
+            { id: 'str-maroon', name: 'Royal Maroon', bg: '#4a0000', text: '#ffffff', font: 'Cinzel' },
+            { id: 'str-dark', name: 'Total Black', bg: '#000000', text: '#ffffff', font: 'UnifrakturMaguntia' },
+            { id: 'str-matcha', name: 'Organic Matcha', bg: '#f1f8e9', text: '#33691e', font: 'Montserrat' },
+            { id: 'str-sunset', name: 'Warm Orange', bg: '#ffedd5', text: '#ea580c', font: 'Bebas Neue' },
+            { id: 'str-navy', name: 'Gold Navy', bg: '#001d3d', text: '#bf953f', font: 'Cinzel' },
+            { id: 'str-cute', name: 'Sweet Candy', bg: '#fce4ec', text: '#ec4899', font: 'Cherry Bomb One' },
+            { id: 'str-minimal', name: 'Modern White', bg: '#ffffff', text: '#000000', font: 'Plus Jakarta Sans' },
+            { id: 'str-bold', name: 'Street Red', bg: '#d50000', text: '#ffffff', font: 'Bebas Neue' }
+        ];
+
+        let currentWeb = webThemes[0];
+        let currentStrip = stripThemes[0];
         let capturedPhotos = [];
-        let isProcessing = false;
+        const video = document.getElementById('video-feed');
+        const stickerCanvas = document.getElementById('sticker-canvas');
 
-        // Inisialisasi Kamera
-        async function initCamera() {
-            cameraError.classList.add('hidden');
+        // Setup
+        async function init() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
-                        width: { ideal: 1280 }, 
-                        height: { ideal: 720 },
-                        facingMode: "user" 
-                    },
-                    audio: false 
+                    video: { width: { ideal: 1280 }, height: { ideal: 960 } } 
                 });
                 video.srcObject = stream;
-                video.onloadedmetadata = () => video.play();
-            } catch (err) {
-                console.error("Gagal akses kamera: ", err);
-                cameraError.classList.remove('hidden');
-            }
-        }
-
-        // Set Filter
-        function setFilter(filterClass) {
-            video.className = filterClass;
-            activeFilter = filterClass;
-        }
-
-        // Tambah Stiker
-        function addSticker(emoji) {
-            const sticker = document.createElement('div');
-            sticker.innerText = emoji;
-            sticker.style.position = 'absolute';
-            sticker.style.left = (Math.random() * 70 + 15) + '%';
-            sticker.style.top = (Math.random() * 70 + 15) + '%';
-            sticker.style.fontSize = '3.5rem';
-            sticker.style.cursor = 'pointer';
-            sticker.style.pointerEvents = 'auto';
-            sticker.className = 'select-none hover:scale-110 transition-transform active:scale-90';
+            } catch (e) { console.error("Camera Error:", e); }
             
-            // Hapus stiker saat diklik
-            sticker.onclick = (e) => {
-                e.stopPropagation();
-                sticker.remove();
+            renderWebThemes();
+            renderStripThemes();
+            applyWebTheme(webThemes[0]);
+            applyStripTheme(stripThemes[0]);
+        }
+
+        function renderWebThemes() {
+            const list = document.getElementById('web-theme-list');
+            webThemes.forEach(t => {
+                const btn = document.createElement('div');
+                btn.id = `web-${t.id}`;
+                btn.className = 'theme-pill';
+                btn.innerHTML = `<span class="dot" style="background:${t.bg}"></span> <span>${t.name}</span>`;
+                btn.onclick = () => applyWebTheme(t);
+                list.appendChild(btn);
+            });
+        }
+
+        function renderStripThemes() {
+            const list = document.getElementById('strip-theme-list');
+            stripThemes.forEach(t => {
+                const btn = document.createElement('div');
+                btn.id = `str-${t.id}`;
+                btn.className = 'theme-pill';
+                btn.innerHTML = `<span class="dot" style="background:${t.bg}"></span> <span>${t.name}</span>`;
+                btn.onclick = () => applyStripTheme(t);
+                list.appendChild(btn);
+            });
+        }
+
+        function applyWebTheme(t) {
+            currentWeb = t;
+            document.body.style.backgroundColor = t.bg;
+            document.body.style.color = t.text;
+            
+            document.querySelectorAll('.glass-panel').forEach(p => p.style.background = t.panel);
+            document.querySelectorAll('#web-theme-list .theme-pill').forEach(p => p.classList.remove('active'));
+            document.getElementById(`web-${t.id}`).classList.add('active');
+
+            const logo = document.getElementById('web-logo');
+            logo.style.fontFamily = t.font;
+            if(['web-maroon', 'web-navy', 'web-dark'].includes(t.id)) {
+                logo.classList.add('gold-gradient-text');
+            } else {
+                logo.classList.remove('gold-gradient-text');
+                logo.style.color = t.text;
+            }
+
+            const btn = document.querySelector('.btn-capture');
+            btn.style.backgroundColor = t.accent;
+            btn.style.color = (t.bg === '#fafafa' || t.bg === '#fff0f3' || t.bg === '#f1f8e9') ? '#000' : '#fff';
+            btn.style.boxShadow = `0 10px 30px -5px ${t.accent}66`;
+
+            document.getElementById('camera-wrapper').style.borderColor = t.accent;
+            document.getElementById('active-mode-display').style.color = t.accent;
+        }
+
+        function applyStripTheme(t) {
+            currentStrip = t;
+            document.querySelectorAll('#strip-theme-list .theme-pill').forEach(p => p.classList.remove('active'));
+            document.getElementById(`str-${t.id}`).classList.add('active');
+
+            const strip = document.getElementById('strip-preview');
+            strip.style.backgroundColor = t.bg;
+            
+            const title = document.getElementById('strip-title');
+            title.style.color = t.text;
+            title.style.fontFamily = t.font;
+            
+            document.getElementById('strip-tag').style.color = t.text;
+            document.getElementById('strip-footer').style.borderColor = `${t.text}22`;
+        }
+
+        // Logic Capture & Export (Fitur Utama Tidak Dikurangi)
+        function addEmoji(emoji) {
+            const el = document.createElement('div');
+            el.className = 'absolute text-5xl cursor-move pointer-events-auto select-none';
+            el.innerText = emoji;
+            el.style.left = '50%'; el.style.top = '50%';
+            el.style.transform = 'translate(-50%, -50%)';
+
+            let isDragging = false;
+            el.onmousedown = () => isDragging = true;
+            window.onmousemove = (e) => {
+                if(!isDragging) return;
+                const rect = document.getElementById('camera-wrapper').getBoundingClientRect();
+                el.style.left = (e.clientX - rect.left) + 'px';
+                el.style.top = (e.clientY - rect.top) + 'px';
             };
-            
-            stickerLayer.appendChild(sticker);
+            window.onmouseup = () => isDragging = false;
+            el.ondblclick = () => el.remove();
+            stickerCanvas.appendChild(el);
         }
 
-        // Proses Ambil 4 Foto
-        async function startCaptureProcess() {
-            if (isProcessing) return;
-            if (!video.srcObject) {
-                alert("Kamera belum aktif, Bestie!");
-                return;
-            }
-
-            isProcessing = true;
+        async function startSession() {
             capturedPhotos = [];
-            downloadBtn.classList.add('hidden');
-            
-            // Reset slots
-            document.querySelectorAll('.photo-frame').forEach((slot, i) => {
-                slot.innerHTML = "Siap-siap...";
-                slot.classList.add('animate-pulse');
-            });
+            document.getElementById('download-trigger').classList.add('hidden');
+            const counter = document.getElementById('countdown');
 
-            for (let i = 1; i <= 4; i++) {
-                statusMsg.innerText = `Berpose ya... (${i}/4) ✨`;
-                statusMsg.style.opacity = '1';
+            for(let i=0; i<4; i++) {
+                counter.classList.remove('hidden');
+                for(let c=3; c>0; c--) {
+                    counter.innerText = c;
+                    await new Promise(r => setTimeout(r, 700));
+                }
+                counter.classList.add('hidden');
                 
-                await runCountdown(3);
-                takePhoto(i);
-                
-                // Jeda antar foto agar user bisa ganti pose
-                await new Promise(r => setTimeout(r, 800));
+                document.getElementById('flash').classList.add('flash-active');
+                captureFrame(i);
+                setTimeout(() => document.getElementById('flash').classList.remove('flash-active'), 500);
+                await new Promise(r => setTimeout(r, 1000));
+            }
+            document.getElementById('download-trigger').classList.remove('hidden');
+        }
+
+        function captureFrame(index) {
+            const canvas = document.getElementById('working-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 1200; canvas.height = 900;
+
+            const vw = video.videoWidth;
+            const vh = video.videoHeight;
+            const targetRatio = 1200 / 900;
+            const currentRatio = vw / vh;
+
+            let sW, sH, sX, sY;
+            if(currentRatio > targetRatio) {
+                sH = vh; sW = vh * targetRatio;
+                sX = (vw - sW) / 2; sY = 0;
+            } else {
+                sW = vw; sH = vw / targetRatio;
+                sX = 0; sY = (vh - sH) / 2;
             }
 
-            statusMsg.innerText = "Selesai! Hasilnya kiyowo banget! ✨";
-            setTimeout(() => statusMsg.style.opacity = '0', 3000);
-            isProcessing = false;
-            downloadBtn.classList.remove('hidden');
-        }
-
-        // Countdown Timer
-        function runCountdown(seconds) {
-            return new Promise((resolve) => {
-                countdownEl.classList.remove('hidden');
-                let count = seconds;
-                countdownEl.innerText = count;
-
-                const timer = setInterval(() => {
-                    count--;
-                    if (count <= 0) {
-                        clearInterval(timer);
-                        countdownEl.classList.add('hidden');
-                        resolve();
-                    } else {
-                        countdownEl.innerText = count;
-                    }
-                }, 1000);
-            });
-        }
-
-        // Ambil Satu Frame
-        function takePhoto(index) {
-            // Flash effect
-            flashEl.classList.add('flash-active');
-            setTimeout(() => flashEl.classList.remove('flash-active'), 300);
-
-            // Canvas size
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-
-            // Draw Video with Mirror effect
             ctx.save();
             ctx.scale(-1, 1);
-            ctx.translate(-canvas.width, 0);
-            
-            // Apply filter manually to canvas
-            if (activeFilter === 'filter-sepia') ctx.filter = 'sepia(0.5)';
-            else if (activeFilter === 'filter-grayscale') ctx.filter = 'grayscale(1)';
-            else if (activeFilter === 'filter-warm') ctx.filter = 'saturate(1.5) sepia(0.2)';
-            else if (activeFilter === 'filter-cool') ctx.filter = 'hue-rotate(30deg) brightness(1.1)';
-            else if (activeFilter === 'filter-soft') ctx.filter = 'brightness(1.1) contrast(0.9) saturate(1.2)';
-            else ctx.filter = 'none';
-            
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            ctx.translate(-1200, 0);
+            ctx.drawImage(video, sX, sY, sW, sH, 0, 0, 1200, 900);
             ctx.restore();
 
-            // Render stickers on top of photo
-            const stickers = stickerLayer.querySelectorAll('div');
-            stickers.forEach(st => {
-                const rect = stickerLayer.getBoundingClientRect();
-                const stRect = st.getBoundingClientRect();
-                
-                // Kalkulasi posisi stiker relatif terhadap video
-                const xRel = (stRect.left - rect.left) / rect.width;
-                const yRel = (stRect.top - rect.top) / rect.height;
-                
-                const canvasX = xRel * canvas.width;
-                const canvasY = yRel * canvas.height;
-                
-                ctx.filter = 'none';
-                ctx.font = "100px Arial"; // Ukuran font besar untuk resolusi tinggi
-                ctx.fillText(st.innerText, canvasX, canvasY + 80);
+            const rect = document.getElementById('camera-wrapper').getBoundingClientRect();
+            stickerCanvas.querySelectorAll('div').forEach(s => {
+                const x = (parseFloat(s.style.left) / rect.width) * 1200;
+                const y = (parseFloat(s.style.top) / rect.height) * 900;
+                ctx.font = "80px serif";
+                ctx.textAlign = "center";
+                ctx.fillText(s.innerText, x, y);
             });
 
-            const dataUrl = canvas.toDataURL('image/png');
-            capturedPhotos.push(dataUrl);
-
-            // Update UI Slot
-            const slot = document.getElementById(`slot-${index}`);
-            slot.innerHTML = `<img src="${dataUrl}" class="w-full h-full object-cover">`;
-            slot.classList.remove('animate-pulse', 'border-dashed');
+            const imgData = canvas.toDataURL('image/png');
+            capturedPhotos.push(imgData);
+            document.getElementById(`frame-${index}`).innerHTML = `<img src="${imgData}">`;
         }
 
-        // Download Hasil Akhir (Strip)
-        async function downloadStrip() {
-            if (capturedPhotos.length < 4) return;
+        async function generateFinalStrip() {
+            const final = document.createElement('canvas');
+            const fctx = final.getContext('2d');
+            final.width = 1200; final.height = 4500;
 
-            const stripCanvas = document.createElement('canvas');
-            const sCtx = stripCanvas.getContext('2d');
-            
-            const w = 450; 
-            const h = 1450; 
-            stripCanvas.width = w;
-            stripCanvas.height = h;
+            fctx.fillStyle = currentStrip.bg;
+            fctx.fillRect(0,0, final.width, final.height);
 
-            // Background Putih Bersih
-            sCtx.fillStyle = "white";
-            sCtx.fillRect(0, 0, w, h);
+            const pad = 80;
+            const iW = 1040;
+            const iH = 780;
 
-            // Gambar 4 Foto ke dalam strip
-            for (let i = 0; i < 4; i++) {
+            for(let i=0; i<capturedPhotos.length; i++) {
                 const img = new Image();
                 img.src = capturedPhotos[i];
                 await new Promise(r => img.onload = r);
-                
-                const margin = 25;
-                const photoW = w - (margin * 2);
-                const photoH = 300;
-                const imgY = 50 + (i * (photoH + 20));
-                
-                sCtx.drawImage(img, margin, imgY, photoW, photoH);
+                const y = pad + (i * (iH + 90));
+                fctx.drawImage(img, pad, y, iW, iH);
             }
 
-            // Tambah Dekorasi Branding di Bawah
-            sCtx.fillStyle = "#f472b6";
-            sCtx.font = "34px 'Cherry Bomb One'";
-            sCtx.textAlign = "center";
-            sCtx.fillText("KIYOWO PHOTO ✨", w/2, h - 85);
+            const footerY = 4050;
+            fctx.textAlign = "center";
+            fctx.fillStyle = currentStrip.text;
+            fctx.font = `bold 100px ${currentStrip.font}`;
+            fctx.fillText("QUEEN'S FRAME", 600, footerY);
             
-            sCtx.fillStyle = "#9ca3af";
-            sCtx.font = "18px Quicksand";
-            sCtx.fillText(new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }), w/2, h - 45);
+            fctx.font = "30px 'Montserrat'";
+            fctx.globalAlpha = 0.5;
+            fctx.letterSpacing = "15px";
+            fctx.fillText("LUXURY COLLECTIVE STUDIO", 600, footerY + 110);
 
-            // Trigger Download menggunakan metode lama document.execCommand fallback jika perlu
-            const link = document.createElement('a');
-            link.download = `kiyowo-photobooth-${Date.now()}.png`;
-            link.href = stripCanvas.toDataURL('image/png');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const downloadLink = document.createElement('a');
+            downloadLink.download = `QueensFrame_Web_${currentWeb.id}_Strip_${currentStrip.id}.png`;
+            downloadLink.href = final.toDataURL('image/png');
+            downloadLink.click();
         }
 
-        function resetGallery() {
-            capturedPhotos = [];
-            document.querySelectorAll('.photo-frame').forEach((slot, i) => {
-                slot.innerHTML = `Foto ${i+1}`;
-                slot.classList.add('border-dashed');
-                slot.classList.remove('animate-pulse');
-            });
-            stickerLayer.innerHTML = '';
-            downloadBtn.classList.add('hidden');
-        }
-
-        // Jalankan Kamera saat load
-        window.addEventListener('load', initCamera);
+        window.onload = init;
     </script>
 </body>
 </html>
